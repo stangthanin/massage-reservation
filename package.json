@@ -1,0 +1,27 @@
+{
+    "name": "massage-reservation",
+    "version": "1.0.0",
+    "description": "Software Development Practice Project, 2021/2",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/stangthanin/massage-reservation.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/stangthanin/massage-reservation/issues"
+    },
+    "homepage": "https://github.com/stangthanin/massage-reservation#readme",
+    "dependencies": {
+        "dotenv": "^16.0.0",
+        "express": "^4.17.3"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.15"
+    }
+}
