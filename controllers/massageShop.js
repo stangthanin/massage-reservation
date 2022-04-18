@@ -36,7 +36,7 @@ exports.getMassageShops = async (req, res, next) => {
     const sortBy = req.query.sort.split(",").join(" ");
     query = query.sort(sortBy);
   } else {
-    query = query.sort("-createdAt");
+    query = query;
   }
 
   //Pagination
@@ -87,7 +87,45 @@ exports.getMassageShop = async (req, res, next) => {
         success: false,
         message: ` massage shop id ${id} is not found`,
       });
+    res.status(200).json({ success: true, data: massageShop });
   } catch (err) {
-    res.status(400).json({ success: false });
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.updateMassageShop = async (req, res, next) => {
+  try {
+    const id = req.params["id"];
+    const massageShop = await MassageShop.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!massageShop) {
+      return res.status(404).json({
+        success: false,
+        message: ` massage shop id ${id} is not found`,
+      });
+    }
+    res.status(200).json({ success: true, data: massageShop });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.deleteMassageShop = async (req, res, next) => {
+  try {
+    const massageShop = await MassageShop.findById(req.params.id);
+
+    if (!massageShop) {
+      return res.status(404).json({
+        success: false,
+        message: `massage shop not found with id of ${req.params.id}`,
+      });
+    }
+    massageShop.remove();
+    res.status(200).json({ success: true, data: {} });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
   }
 };
