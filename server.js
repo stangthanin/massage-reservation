@@ -34,6 +34,7 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 connectDB();
 
 const auth = require("./routes/auth");
+const massageShop = require("./routes/massageShop");
 
 const limiter = rateLimit({
   windowsMs: 10 * 60 * 1000, //10 mins
@@ -53,6 +54,7 @@ app.use(cors());
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use("/api/v1/auth", auth);
+app.use("/api/v1/massageshop", massageShop);
 
 const PORT = process.env.PORT;
 
