@@ -15,11 +15,11 @@ router.use("/:massageShopId/appointments", appointmentRouter);
 
 router
   .route("/")
-  .get(getMassageShops)
+  .get(protect, getMassageShops)
   .post(protect, authorize("admin"), createMassageShop);
 router
   .route("/:id")
-  .get(getMassageShop)
+  .get(protect, getMassageShop)
   .patch(protect, authorize("admin"), updateMassageShop)
   .delete(protect, authorize("admin"), deleteMassageShop);
 
