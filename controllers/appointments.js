@@ -1,69 +1,70 @@
-const { default: mongoose } = require("mongoose");
 const Appointment = require("../models/Appointment");
 const MassageShop = require("../models/MassageShop");
 
-// exports.getAppointments = async (req, res, next) => {
-//   let query;
+exports.getAppointments = async (req, res, next) => {
+  let query;
 
-//   if (req.user.role !== "admin") {
-//     query = Appointment.find({ user: req.user.id }).populate({
-//       path: "hospital",
-//       select: "name province tel",
-//     });
-//   } else {
-//     if (req.params.hospitalId) {
-//       query = Appointment.find({ hospital: req.params.hospitalId }).populate({
-//         path: "hospital",
-//         select: "name province tel",
-//       });
-//     } else {
-//       query = Appointment.find().populate({
-//         path: "hospital",
-//         select: "name province tel",
-//       });
-//     }
-//   }
+  if (req.user.role !== "admin") {
+    query = Appointment.find({ user: req.user.id }).populate({
+      path: "massageShop",
+      select: "name address tel openTime closeTime",
+    });
+  } else {
+    if (req.params.id) {
+      query = Appointment.find({
+        massageShop: req.params.id,
+      }).populate({
+        path: "massageShop",
+        select: "name address tel openTime closeTime",
+      });
+    } else {
+      query = Appointment.find().populate({
+        path: "massageShop",
+        select: "name address tel openTime closeTime",
+      });
+    }
+  }
 
-//   try {
-//     const appointments = await query;
-//     res
-//       .status(200)
-//       .json({ success: true, count: appointments.length, data: appointments });
-//   } catch (error) {
-//     console.log(error);
+  try {
+    const appointments = await query;
+    res
+      .status(200)
+      .json({ success: true, count: appointments.length, data: appointments });
+  } catch (error) {
+    console.log(error);
 
-//     return res
-//       .status(500)
-//       .json({ success: false, message: "Cannot find Appointment" });
-//   }
-// };
+    return res
+      .status(500)
+      .json({ success: false, message: "Cannot find Appointment" });
+  }
+};
 
-// exports.getAppointment = async (req, res, next) => {
-//   try {
-//     const appointment = await Appointment.findById(req.params.id).populate({
-//       path: "hospital",
-//       select: "name description tel",
-//     });
+exports.getAppointment = async (req, res, next) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id).populate({
+      path: "massageShop",
+      select: "name address tel openTime closeTime",
+    });
 
-//     if (!appointment) {
-//       return res.status(404).json({
-//         success: false,
-//         message: `No appointment with the id of ${req.params.id}`,
-//       });
-//     }
+    if (!appointment) {
+      return res.status(404).json({
+        success: false,
+        message: `No appointment with the id of ${req.params.massageShopId}`,
+      });
+    }
 
-//     res.status(200).json({
-//       success: true,
-//       data: appointment,
-//     });
-//   } catch (error) {
-//     console.log(error);
+    res.status(200).json({
+      success: true,
+      data: appointment,
+    });
+  } catch (error) {
+    console.log(error);
 
-//     return res
-//       .status(500)
-//       .json({ success: false, message: "Cannot find Appointment" });
-//   }
-// };
+    return res
+      .status(500)
+      .json({ success: false, message: "Cannot find Appointment" });
+  }
+};
 
 exports.addAppointment = async (req, res, next) => {
   try {
@@ -77,13 +78,13 @@ exports.addAppointment = async (req, res, next) => {
         message: `No massage shop with the id of ${req.params.massageShopId}`,
       });
     }
-    console.log(req.body);
-    const user = req.body.user;
-    //console.log(user);
 
-    const existedAppointment = await Appointment.find({
-      user: mongoose.Types.ObjectId(user),
-    });
+    if (req.user.role !== "admin") {
+      // require user id if appoint by admin
+      req.body.user = req.user.id;
+    }
+
+    const existedAppointment = await Appointment.find({ user: req.user.id });
 
     if (existedAppointment.length >= 3 && req.user.role !== "admin") {
       return res.status(400).json({
@@ -102,9 +103,11 @@ exports.addAppointment = async (req, res, next) => {
   } catch (error) {
     console.log(error);
 
-    return res
-      .status(500)
-      .json({ success: false, message: "Cannot create Appointment" });
+    return res.status(500).json({
+      success: false,
+      message: "Cannot create Appointment",
+      error: error.message,
+    });
   }
 };
 
@@ -129,6 +132,7 @@ exports.updateAppointment = async (req, res, next) => {
       });
     }
 
+    console.log(req.body);
     appointment = await Appointment.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -138,40 +142,42 @@ exports.updateAppointment = async (req, res, next) => {
   } catch (error) {
     console.log(error);
 
-    return res
-      .status(500)
-      .json({ success: false, message: "Cannot update Appointment" });
+    return res.status(500).json({
+      success: false,
+      message: "Cannot update Appointment",
+      error: error.message,
+    });
   }
 };
 
-// exports.deleteAppointment = async (req, res, next) => {
-//   try {
-//     const appointment = await Appointment.findById(req.params.id);
+exports.deleteAppointment = async (req, res, next) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
 
-//     if (!appointment) {
-//       return res.status(404).json({
-//         success: false,
-//         message: `No appointment with the id of ${req.params.hospitalId}`,
-//       });
-//     }
+    if (!appointment) {
+      return res.status(404).json({
+        success: false,
+        message: `No appointment with the id of ${req.params.id}`,
+      });
+    }
 
-//     if (
-//       appointment.user.toString() !== req.user.id &&
-//       req.user.role !== "admin"
-//     ) {
-//       return res.status(401).json({
-//         success: false,
-//         message: `User ${req.user.id} is not authorized to delete this bootcamp`,
-//       });
-//     }
+    if (
+      appointment.user.toString() !== req.user.id &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: `User ${req.user.id} is not authorized to delete this Appointment`,
+      });
+    }
 
-//     await appointment.remove();
+    await appointment.remove();
 
-//     res.status(200).json({ success: true, data: {} });
-//   } catch (error) {
-//     console.log(error);
-//     return res
-//       .status(500)
-//       .json({ success: false, message: "Cannot delete Appointment" });
-//   }
-// };
+    res.status(200).json({ success: true, data: {} });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Cannot delete Appointment" });
+  }
+};
