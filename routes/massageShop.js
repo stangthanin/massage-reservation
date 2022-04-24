@@ -7,8 +7,12 @@ const {
   deleteMassageShop,
 } = require("../controllers/massageShop");
 const { protect, authorize } = require("../middleware/auth");
+const appointmentRouter = require("./appointments");
 
 const router = express.Router();
+
+router.use("/:massageShopId/appointments", appointmentRouter);
+
 router
   .route("/")
   .get(getMassageShops)

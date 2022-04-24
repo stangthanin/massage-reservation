@@ -13,11 +13,24 @@ let emailRegex = new RegExp(
     .join("")
 );
 
+let telRegex = new RegExp(
+  /^[\+]?[(]?[0-9]{2,3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
+);
+
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please add a name"],
     trim: true,
+  },
+
+  tel: {
+    type: String,
+    required: [true, "Please add a telephone number"],
+    match: [
+      telRegex,
+      "Please add a valid telephone number in format 00-00000000",
+    ],
   },
 
   email: {
@@ -26,6 +39,7 @@ const UserSchema = new mongoose.Schema({
     unique: true,
     match: [emailRegex, "Please add a valid email"],
   },
+
   role: {
     type: String,
     enum: ["user", "admin"],
@@ -37,15 +51,6 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please add a password"],
     minlength: 6,
     select: false,
-  },
-
-  resetPasswordToken: String,
-
-  resetPasswordExpire: Date,
-
-  createdAt: {
-    type: Date,
-    default: Date.now,
   },
 });
 
