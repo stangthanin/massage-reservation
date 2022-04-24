@@ -35,10 +35,11 @@ connectDB();
 
 const auth = require("./routes/auth");
 const massageShop = require("./routes/massageShop");
+const appointments = require("./routes/appointments");
 
 const limiter = rateLimit({
   windowsMs: 10 * 60 * 1000, //10 mins
-  max: 50,
+  max: 100,
 });
 
 const app = express();
@@ -55,6 +56,7 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/massageshop", massageShop);
+app.use("/api/v1/appointments", appointments);
 
 const PORT = process.env.PORT;
 

@@ -1,0 +1,8 @@
+{{url}}/api/v1/massageShop/625dacdd8f3b260bc968704e/appointments
+
+
+{
+    "apptDateTime": "2022-03-17T15:30:00.000Z",
+    "durationMinute": 120,
+    "user": "625da4216dc5c749084cb1b3"
+}

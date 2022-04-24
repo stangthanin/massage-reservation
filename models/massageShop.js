@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+let timeRegex = new RegExp(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/);
+
 const MassageShopSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -7,10 +9,12 @@ const MassageShopSchema = new mongoose.Schema({
     trim: true,
     maxlength: [50, "Name can not be more than 50 characters"],
   },
+
   address: {
     type: String,
     required: [true, "Please add an address"],
   },
+
   tel: {
     type: String,
     match: [
@@ -18,13 +22,17 @@ const MassageShopSchema = new mongoose.Schema({
       "Please add a valid phone number",
     ],
   },
+
   openTime: {
     type: String,
     required: [true, "Please add an open time"],
+    match: [timeRegex, "Please add a valid time in format 00:00"],
   },
+
   closeTime: {
     type: String,
     required: [true, "Please add a close time"],
+    match: [timeRegex, "Please add a valid time in format 00:00"],
   },
 });
 
