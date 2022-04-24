@@ -38,8 +38,8 @@ const massageShop = require("./routes/massageShop");
 const appointments = require("./routes/appointments");
 
 const limiter = rateLimit({
-  windowsMs: 10 * 60 * 1000, //10 mins
-  max: 100,
+  windowsMs: 1 * 60 * 1000,
+  max: 50,
 });
 
 const app = express();
