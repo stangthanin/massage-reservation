@@ -33,7 +33,19 @@ const MassageShopSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please add a close time"],
     match: [timeRegex, "Please add a valid time in format 00:00"],
+    validate: {
+      validator: closeTimeValidator,
+      message: "Close time must be after the open time",
+    },
   },
 });
+
+function closeTimeValidator(enterCloseTime) {
+  return (
+    this.openTime.split(":")[0] < enterCloseTime.split(":")[0] ||
+    (this.openTime.split(":")[0] == enterCloseTime.split(":")[0] &&
+      this.openTime.split(":")[1] < enterCloseTime.split(":")[1])
+  );
+}
 
 module.exports = mongoose.model("MassageShop", MassageShopSchema);
