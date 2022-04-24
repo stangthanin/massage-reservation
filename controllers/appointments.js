@@ -132,13 +132,15 @@ exports.updateAppointment = async (req, res, next) => {
       });
     }
 
-    console.log(req.body);
-    appointment = await Appointment.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    req.body.user = req.user.id;
+    req.body.massageShop = appointment.massageShop;
 
-    res.status(200).json({ success: true, data: appointment });
+    console.log(req.body);
+
+    const updateAppointment = await Appointment.create(req.body);
+    await appointment.remove();
+
+    res.status(200).json({ success: true, data: updateAppointment });
   } catch (error) {
     console.log(error);
 
