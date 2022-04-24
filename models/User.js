@@ -27,10 +27,7 @@ const UserSchema = new mongoose.Schema({
   tel: {
     type: String,
     required: [true, "Please add a telephone number"],
-    match: [
-      telRegex,
-      "Please add a valid telephone number in format 00-00000000",
-    ],
+    match: [telRegex, "Please add a valid telephone number"],
   },
 
   email: {
