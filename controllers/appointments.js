@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Appointment = require("../models/Appointment");
 const MassageShop = require("../models/MassageShop");
 
@@ -76,10 +77,13 @@ exports.addAppointment = async (req, res, next) => {
         message: `No massage shop with the id of ${req.params.massageShopId}`,
       });
     }
+    console.log(req.body);
+    const user = req.body.user;
+    //console.log(user);
 
-    req.body.user = req.user.id;
-
-    const existedAppointment = await Appointment.find({ user: req.user.id });
+    const existedAppointment = await Appointment.find({
+      user: mongoose.Types.ObjectId(user),
+    });
 
     if (existedAppointment.length >= 3 && req.user.role !== "admin") {
       return res.status(400).json({
