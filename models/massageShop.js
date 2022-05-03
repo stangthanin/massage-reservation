@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-let timeRegex = new RegExp(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/);
+let timeRegex = new RegExp(/^([01][0-9]|2[0-3]):[0-5][0-9]$/);
 
 const MassageShopSchema = new mongoose.Schema({
   name: {
